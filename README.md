@@ -3,8 +3,8 @@ Simple python utility for tag-based scraping off of danbooru.donmai.us using the
 
 ## Setup
 
-Install python 3.8+
-Run `pip install requests`
+1. Install python 3.8+
+2. Run `pip install requests`
 
 ## Example usage
 

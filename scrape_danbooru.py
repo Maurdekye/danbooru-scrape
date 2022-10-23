@@ -2,9 +2,6 @@ from argparse import ArgumentParser
 from pathlib import Path
 import requests
 import os
-import json
-
-page_limit = 1000
 
 parser = ArgumentParser(description="Scrape content from danbooru based on tag search.")
 parser.add_argument("--tags", type=str, required=True, help="Tags to search for when downloading content.")
@@ -16,7 +13,7 @@ parser.add_argument("--username", type=str, help="Username to log on to Danbooru
 parser.add_argument("--max_file_size", action='store_true', help="Attempt to download the maximum available file size instead of the default size.")
 parser.add_argument("--extensions", type=str, default=".png,.jpg", help="Extensions of file types to download, comma-separated. Pass * to download all file types. (Default .png,.jpg)")
 
-def get_posts(tags, url, login_info=None):
+def get_posts(tags, url, login_info=None, page_limit=1000):
     for i in range(1, page_limit+1):
         params = {
             "tags": tags,
@@ -55,7 +52,7 @@ def main(args):
 
     i = 0
     try:
-        for post in get_posts(args.tags, args.url, login_info):
+        for post in get_posts(args.tags, args.url, login_info, args.page_limit):
             if "file_url" not in post or (not all_extensions and Path(post["file_url"]).suffix not in extensions):
                 continue
             url_path = post["large_file_url"] if args.max_file_size and "large_file_url" in post else post["file_url"]

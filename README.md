@@ -13,7 +13,7 @@ python scrape_danbooru.py \
   --tags "genshin_impact"
 ```
 
-Pass username and api_key to log on to your account and surpass the default tag search and page limit restrictions:
+Pass a username and api_key to log on to your account and surpass the default tag search and page limit restrictions:
 
 ```
 python scrape_danbooru.py \

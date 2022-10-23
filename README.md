@@ -1,7 +1,13 @@
 # danbooru-scrape
 Simple python utility for tag-based scraping off of danbooru.donmai.us using their web api.
 
-Example usage:
+## Setup
+
+1. Install python 3.8+
+2. Run `pip install requests`
+
+## Example usage
+
 ```
 python scrape_danbooru.py \
   --tags "genshin_impact"

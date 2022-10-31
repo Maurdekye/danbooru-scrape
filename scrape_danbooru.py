@@ -60,7 +60,7 @@ def main(args):
 
     all_extensions = args.extensions == "*"
     extensions = [e.strip().lower() for e in args.extensions.split(",")]
-    if args.tags_only and not args.save_tags:
+    if args.tags_only:
         args.save_tags = True
 
     i = 0

@@ -60,6 +60,8 @@ def main(args):
 
     all_extensions = args.extensions == "*"
     extensions = [e.strip().lower() for e in args.extensions.split(",")]
+    if args.tags_only and not args.save_tags:
+        args.save_tags = True
 
     i = 0
     j = 0
@@ -90,8 +92,10 @@ def main(args):
                     print(f"Error saving tag file {tag_file}, skipping")
     except KeyboardInterrupt:
         pass
-    print(f"Scraped {i} files")
-    print(f"Saved {j} tag files")
+    if not args.tags_only:
+        print(f"Scraped {i} files")
+    if args.save_tags:
+        print(f"Saved {j} tag files")
 
 if __name__ == "__main__":
     try:

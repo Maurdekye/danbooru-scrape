@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 import requests
 import os
+import re
 
 parser = ArgumentParser(description="Scrape content from danbooru based on tag search.")
 parser.add_argument("--tags", type=str, required=True, help="Tags to search for when downloading content.")
@@ -9,11 +10,13 @@ parser.add_argument("--output", type=Path, default="output", help="Output direct
 parser.add_argument("--url", type=str, default="https://danbooru.donmai.us", help="Danbooru url to make api calls to. (default: https://danbooru.donmai.us)")
 parser.add_argument("--page_limit", type=int, default=1000, help="Maximum number of pages to parse through when downloading. (default: 1000)")
 parser.add_argument("--api_key", type=str, help="API key for Danbooru, optional unless you want to link a higher level account to surpass tag search and page limit restrictions. Username must also be provided.")
-parser.add_argument("--username", type=str, help="Username to log on to Danbooru with, to be provided alongside ana api_key")
+parser.add_argument("--username", type=str, help="Username to log on to Danbooru with, to be provided alongside an a api_key")
 parser.add_argument("--max_file_size", action='store_true', help="Attempt to download the maximum available file size instead of the default size.")
 parser.add_argument("--extensions", type=str, default=".png,.jpg", help="Extensions of file types to download, comma-separated. Pass * to download all file types. (default: .png,.jpg)")
 parser.add_argument("--save_tags", action='store_true', help="Save the tags for each image in a text file with the same name.")
 parser.add_argument("--tags_only", action='store_true', help="Only save tags for existing images. Do not download any images.")
+parser.add_argument("--write_translation", action='store_true', help="Write the translation of foreign text in the image to the tag file.")
+
 
 
 def get_posts(tags, url, login_info=None, page_limit=1000):
@@ -32,6 +35,23 @@ def get_posts(tags, url, login_info=None, page_limit=1000):
             raise Exception("Danbooru API: " + content["message"]) 
         yield from content
 
+def get_notes(post, url, login_info=None):
+    params = {
+        "search[post_id": post["id"]
+    }
+    if login_info:
+        params.update(login_info)
+    req = requests.get(f"{url}/notes.json", params=params)
+    content = req.json()
+    notes = ""
+    pattern = r'(<(?:"[^"]*"[\'"]*|\'[^\']*\'[\'"]*|[^\'">])+>)*'
+    index = 1
+    for note in content:
+        processed_note = re.sub(pattern, '', note["body"])
+        notes += f'{index}: "{processed_note}" '
+        index += 1
+    return notes
+        
 def save_to_path(stream, path):
     with path.open('wb') as f:
         for bytes in stream.iter_content(chunk_size=128):
@@ -86,6 +106,13 @@ def main(args):
                 try:
                     print(f"Saving tags {tag_file}")
                     tag_string = format_tags(post["tag_string"])
+                    if args.write_translation:
+                        notes = ""
+                        for tag in post["tag_string"].split():
+                            if tag == "translated":
+                                notes = get_notes(post, args.url, login_info)
+                        if notes:
+                            tag_string += f" <Translation>: {notes}"
                     tag_file.write_text(tag_string, encoding='utf-8')
                     j += 1
                 except Exception as e:

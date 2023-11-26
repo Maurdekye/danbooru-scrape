@@ -10,7 +10,7 @@ parser.add_argument("--output", type=Path, default="output", help="Output direct
 parser.add_argument("--url", type=str, default="https://danbooru.donmai.us", help="Danbooru url to make api calls to. (default: https://danbooru.donmai.us)")
 parser.add_argument("--page_limit", type=int, default=1000, help="Maximum number of pages to parse through when downloading. (default: 1000)")
 parser.add_argument("--api_key", type=str, help="API key for Danbooru, optional unless you want to link a higher level account to surpass tag search and page limit restrictions. Username must also be provided.")
-parser.add_argument("--username", type=str, help="Username to log on to Danbooru with, to be provided alongside an a api_key")
+parser.add_argument("--username", type=str, help="Username to log on to Danbooru with, to be provided alongside an api_key")
 parser.add_argument("--max_file_size", action='store_true', help="Attempt to download the maximum available file size instead of the default size.")
 parser.add_argument("--extensions", type=str, default=".png,.jpg", help="Extensions of file types to download, comma-separated. Pass * to download all file types. (default: .png,.jpg)")
 parser.add_argument("--save_tags", action='store_true', help="Save the tags for each image in a text file with the same name.")
